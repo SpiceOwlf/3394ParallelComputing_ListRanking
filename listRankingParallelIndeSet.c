@@ -11,6 +11,7 @@ void printArray(int *l, int listLen){
     }
     printf("\n" );
 }
+
 int *getSuccessor(){
   //0 is a dummy node;
   static int r[10] = {0,2,6,1,5,7,8,3,9,0};
@@ -22,7 +23,6 @@ int *getSuccessor(){
 int *getPredecessor(){
   static int r[10] = {0,3,1,7,0,4,2,5,6,8};
   return r;
-
 }
 
 int *initRes(int *l, int len){
@@ -42,58 +42,32 @@ int *initRes(int *l, int len){
 }
 
 ////////////////////////////////////////
-int *updateRes(int *r, int *s, int len){
-  //           result, successor, lenth of array
-  int *res = r;
-  int *q = s;
-  //can use q[i] to find the element
-  for(int i =0; i< len; i++){
+__global__ void updateResAll(int *r, int *s, int *q, int n){
+  //              result, successor, returnable result, lenth of array
+  int i = threadIdx.x;
+  if (i < n){
+    q[i] = s[i];
+    __syncthreads();
+
+    //try to update all
     while(q[i] != 0 && q[q[i]] != 0){
-      res[i] = res[i] + res[q[i]];
+      r[i] = r[i] + r[q[i]];
       q[i] = q[q[i]];
+      __syncthreads();
     }
   }
-  return res;
 }
-////////////////////////////////////////
-__global__ void updateResOneBlock(int *r, int *s){
-  //              result, successor, lenth of array
 
-  int *q = s;
-  int i = threadIdx.x;
-  //try to update one rounds
-  if(i < 10 && q[i] != 0 && q[q[i]] != 0){
-    r[i] = r[i] + r[q[i]];
-    q[i] = q[q[i]];
-}
-  __syncthreads();
+__global__ void updateIndependentSet(int *s, int *p, int *r, int n, int *u){
+            //input: successor, predecessor, result, length, u: 2-d array, store info
+            //output: updated s, p, r
+      int i = threadIdx.x;
+
+
 
 
 }
 ////////////////////////////////////////
-__global__ void updateResAll(int *r, int *s){
-  //              result, successor, lenth of array
-
-  int *q = s;
-  int i = threadIdx.x;
-  //try to update all
-  while(i < 10 && q[i] != 0 && q[q[i]] != 0){
-    r[i] = r[i] + r[q[i]];
-    q[i] = q[q[i]];
-}
-  __syncthreads();
-
-}
-
-__global__ void indeSetRemove(int *r, int *s, int *p, int *u){//u is 2-D array
-//algoo 3.2, removing nodes; result, successor, presessor
-//work on this, and further the optimal way
-
-}
-////////////////////////////////////////
-__global__ void test(int *r, int *s){
-
-}
 
 int main (){
    int arrayLen = 10;
@@ -102,25 +76,27 @@ int main (){
 
    arr = getSuccessor();
    res = initRes(arr, arrayLen);
-
 //-------------------------------------------
 //update threads in parallel
-   int *updateResult = (int *)malloc(arrayLen*sizeof(int));;
-   int *devRes, *devArr;//device result, array;
+   int *hostQ = (int *)malloc(arrayLen*sizeof(int));
+   int *updateResult = (int *)malloc (arrayLen*sizeof(int));
+   int *devRes, *devArr, *devQ;//device result, array;
    cudaMalloc((void **)&devRes, arrayLen*sizeof(int));
    cudaMalloc((void **)&devArr, arrayLen*sizeof(int));
+   cudaMalloc((void **)&devQ, arrayLen*sizeof(int));
+
+
    cudaMemcpy(devRes, res, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
    cudaMemcpy(devArr, arr, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
+   cudaMemcpy(devQ, hostQ, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
 
-   updateResAll<<<1,arrayLen>>>(devRes, devArr);
-    // test<<<1,9>>>(devRes, devArr);
 
+   updateResAll<<<1,arrayLen>>>(devRes, devArr,devQ,arrayLen);
      //<<<block,thread>>>
-   cudaMemcpy(updateResult, devRes,arrayLen * sizeof(int),cudaMemcpyDeviceToHost);
-   printf("22222222 \n");
+   cudaMemcpy(updateResult, devRes,arrayLen*sizeof(int),cudaMemcpyDeviceToHost);
+   // printf("22222222 \n");
    printArray(updateResult,arrayLen);
-	 printf("11111111 \n");
-   //seg here
+	 // printf("11111111 \n");
    cudaFree(devRes);
    cudaFree(devArr);
 
