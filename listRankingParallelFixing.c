@@ -67,6 +67,7 @@ __global__ void updateResOneBlock(int *r, int *s){
 __global__ void updateResAll(int *r, int *s, int *q, int n){
   //              result, successor, lenth of array
   //s changes here bc q points s
+
   //create space for q
   int i = threadIdx.x;
 
@@ -98,8 +99,8 @@ __global__ void test(int *r, int *s){
 
 int main (){
    int arrayLen = 7;
-   int *arr = (int *)malloc(7*sizeof(int));
-   int *res = (int *)malloc(7*sizeof(int));
+   int *arr = (int *)malloc(arrayLen*sizeof(int));
+   int *res = (int *)malloc(arrayLen*sizeof(int));
 
    arr = getArray();
    res = initRes(arr, arrayLen);
@@ -107,20 +108,24 @@ int main (){
   // printArray(res,arrayLen);
 //-------------------------------------------
 //update threads in parallel
-   int *updateResult = (int *)malloc(7*sizeof(int));;
-   int *devRes, *devArr;//device result, array;
-   cudaMalloc((void **)&devRes, 7*sizeof(int));
-   cudaMalloc((void **)&devArr, 7*sizeof(int));
+   int *hostQ = (int *)malloc(arrayLen*sizeof(int));
+   int *updateResult = (int *)malloc (arrayLen*sizeof(int));
+   int *devRes, *devArr, *devQ;//device result, array;
+   cudaMalloc((void **)&devRes, arrayLen*sizeof(int));
+   cudaMalloc((void **)&devArr, arrayLen*sizeof(int));
+   cudaMalloc((void **)&devQ, arrayLen*sizeof(int));
 
 
-   cudaMemcpy(devRes, res, 7*sizeof(int),cudaMemcpyHostToDevice);
-   cudaMemcpy(devArr, arr, 7*sizeof(int),cudaMemcpyHostToDevice);
+   cudaMemcpy(devRes, res, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
+   cudaMemcpy(devArr, arr, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
+   cudaMemcpy(devQ, hostQ, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
 
-   updateResAll<<<1,7>>>(devRes, devArr);
+
+   updateResAll<<<1,arrayLen>>>(devRes, devArr,devQ,arrayLen);
     // test<<<1,7>>>(devRes, devArr);
 
      //<<<block,thread>>>
-   cudaMemcpy(updateResult, devRes,7*sizeof(int),cudaMemcpyDeviceToHost);
+   cudaMemcpy(updateResult, devRes,arrayLen*sizeof(int),cudaMemcpyDeviceToHost);
    printf("22222222 \n");
    printArray(updateResult,arrayLen);
 	 printf("11111111 \n");
