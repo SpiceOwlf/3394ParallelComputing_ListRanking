@@ -55,7 +55,8 @@ __global__ void updateResOneBlock(int *r, int *s){
 }
 
 __global__ void updateResAll(int *r, int *s, int *q, int n){
-  //              result, successor, lenth of array
+  //              result, successor,helper array; lenth of array
+  //with helper array, s will not be changed
   int i = threadIdx.x;
   if (i < n){
     q[i] = s[i];
@@ -69,6 +70,16 @@ __global__ void updateResAll(int *r, int *s, int *q, int n){
     }
   }
 }
+// __global__ void updateBetweenBlocks(int *res1, int *res2, int *s1, int *s2, int n){
+//   //update only one round. Use if to control it;
+//   int ix = threadIdx.x + blockDim.x * blockIdx.x;
+//   if( ix > 0 && ix < n){
+//     if(s1[ix] != 0 && s1[s1[ix]] != 0){
+//       res2[ix] = res1[ix] + res1[s1[ix]];
+//       s2[ix] = s1[s1[ix]];
+//     }
+//   }
+// }
 ////////////////////////////////////////
 
 int main (){
