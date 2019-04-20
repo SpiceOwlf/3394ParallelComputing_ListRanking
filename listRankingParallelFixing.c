@@ -2,7 +2,8 @@
 #include <stdlib.h>
 // #define N 7;
 //nvcc doesn't distinguish this define thing
-
+//can use updateResAll to deal with successor array in same block
+//TODO: how to sync between different blocks?
 void printArray(int *l, int listLen){
   for(int x=0; x<listLen; x++)
     {
@@ -37,10 +38,25 @@ int *initRes(int *l, int len){
 }
 
 ////////////////////////////////////////
+__global__ void updateResOneBlock(int *r, int *s){
+  //              result, successor, lenth of array
+  //__shared__ int  *finalRes;
+  //finalRes = r;
+  int *q = s;
+  int i = threadIdx.x;
+  //int distance;
+  //try to update one rounds
+  if(i < 7 && q[i] != 0 && q[q[i]] != 0){
+    r[i] = r[i] + r[q[i]];
+    q[i] = q[q[i]];
+}
+  __syncthreads();
+
+}
+
 __global__ void updateResAll(int *r, int *s, int *q, int n){
   //              result, successor, lenth of array
   int i = threadIdx.x;
-
   if (i < n){
     q[i] = s[i];
     __syncthreads();

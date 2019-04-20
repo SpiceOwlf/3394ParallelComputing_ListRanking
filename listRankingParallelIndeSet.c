@@ -62,7 +62,8 @@ __global__ void updateIndependentSet(int *s, int *p, int *r, int n, int *u){
             //input: successor, predecessor, result, length, u: 2-d array, store info
             //output: updated s, p, r
       int i = threadIdx.x;
-
+      //select independent set randomly?
+      //now just {1,5,6}
 
 
 
