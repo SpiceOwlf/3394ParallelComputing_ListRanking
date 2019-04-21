@@ -1,64 +1,86 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "linearFunctions.h"
 
-void printArray(int *l, int listLen){
-  for(int x=0; x<listLen; x++){
-        printf("%d  ",  *(l+x));
-    }
-    printf("\n" );
-}
-int *getArray(){
-  //0 is a dummy node;
-  static int r[7] = {0,2,5,4,0,6,3};
-  //each num represents the successor
-  //2 means 1's successor is 2
-  //5 means 2's successor is 5
 
-  return r;
-}
 
-int *initRes(int *l, int len){
-  //for array, can only return the pointer of the array
-  //static makes returnable outside local function
-  //need to use malloc to assign array space
-  int *res = (int *)malloc(len * sizeof(int*));
-  for (int i = 0; i < len; i++){
-     // res[i] = i + 10;
-     if(l[i] == 0){
-       res[i] = 0;
-     }else{
-       res[i] = 1;
-     }
-  }
-  return res;
-}
 
-int *updateRes(int *r, int *s, int len){
-  //              result, successor, lenth of array
-  int *res = r;
-  int *q = s;
-  //can use q[i] to find the element
-  for(int i =0; i< len; i++){
-    while(q[i] != 0 && q[q[i]] != 0){
-      res[i] = res[i] + res[q[i]];
-      q[i] = q[q[i]];
-    }
-  }
-  return res;
-}
+
+
+
+
 
 int main ()
 {
-   int arrayLen = 7;
-   int *arr;
-   arr = getArray();
-   printArray(arr,7);
+   int arrayLen = 10;
+   int *successor = getSuccessor();
+   int *predecessor = getPredecessor();
+   // printArray(successor,arrayLen);
    int *res;
-   res = initRes(arr, arrayLen);
-   printArray(res,arrayLen);
+   res = initRes(successor, arrayLen);
+   // printArray(res,arrayLen);
    int *updateResult;
-
-   updateResult = updateRes(res, arr, arrayLen);
+   updateResult = updateRes(res, successor, arrayLen);
    printArray(updateResult,arrayLen);
+/////////////////////////////////////////
+// independent set here;
+//everything in U is 0 initially;
+    // int **u = (int**) malloc(sizeof(int*) * arrayLen);
+    // for(int i = 0; i < arrayLen; i++){
+    //   u[i] = (int*) malloc(sizeof(int*) * 3);
+    // }
+    // for(int j = 0; j< arrayLen; j++){
+    //   for(int k = 0; k< 3; k++){
+    //     u[j][k] = 0;
+    //   }
+    // }
+
+// print func here
+    // for(int i = 0; i< 10; i++){
+    //   for(int j = 0; j<3; j++){
+    //     printf("%d ",(u[i])[j] );
+    //   }
+    //   printf("\n" );
+    // }
+// /////////////////////////////////////////
+//
+// printArray(res, arrayLen);
+// printArray(successor, arrayLen);
+// printArray(predecessor, arrayLen);
+//     int N[arrayLen];
+//     for(int m = 0; m< arrayLen;m++){
+//       N[m] = 0;
+//     }
+//
+//     N[1] = 1;
+//     N[5] = 2;
+//     N[6] = 3;
+//     for(int l = 1; l< 10;l++){
+//     if(N[l] != 0){
+//       u[N[l]][0] = l;
+//       u[N[l]][1] = successor[l];
+//       u[N[l]][2] = res[l];
+//     }
+//     res[predecessor[l]] = res[predecessor[l]] + res[l];
+//     successor[predecessor[l]] = successor[l];
+//     predecessor[successor[l]] = predecessor[l];
+//   }
+//   printf("1111111111111111111\n" );
+//   printArray(res, arrayLen);
+//   printArray(successor, arrayLen);
+//   printArray(predecessor, arrayLen);
+//
+//     for(int i = 0; i< 10; i++){
+//       for(int j = 0; j<3; j++){
+//         printf("%d ",(u[i])[j] );
+//       }
+//       printf("\n" );
+//     }
+// //res,successor; predecessor
+
+
+
+
+
    return 0;
 }

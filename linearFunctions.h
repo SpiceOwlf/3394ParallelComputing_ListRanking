@@ -20,6 +20,7 @@ int *getPredecessor(){
   return r;
 
 }
+
 int *initRes(int *l, int len){
   //for array, can only return the pointer of the array
   //static makes returnable outside local function
@@ -48,27 +49,4 @@ int *updateRes(int *r, int *s, int len){
     }
   }
   return res;
-}
-
-int *indeSetRemove(int *r, int *s, int *p, int *u, int len){
-//remove 3 nodes from the original list
-//remove {1,3,6}
-
-
-}
-
-int main ()
-{
-   int arrayLen = 10;
-   int *arr;
-   arr = getSuccessor();
-   printArray(arr,arrayLen);
-   int *res;
-   res = initRes(arr, arrayLen);
-   printArray(res,arrayLen);
-   int *updateResult;
-
-   updateResult = updateRes(res, arr, arrayLen);
-   printArray(updateResult,arrayLen);
-   return 0;
 }

@@ -1,92 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "parallelFunctions.h"
 // #define N 7;
 //nvcc doesn't distinguish this define thing
 //can use updateResAll to deal with successor array in same block
 //TODO: how to sync between different blocks?
-void printArray(int *l, int listLen){
-  for(int x=0; x<listLen; x++)
-    {
-        printf("%d  ",  l[x]);
 
+void print2DArray(int *arr, int listLen){
+  for(int i = 0; i< listLen; i++){
+    for(int j = 0; j<3; j++){
+      printf("%d ",(arr[i][j]) );
     }
     printf("\n" );
-}
-int *getSuccessor(){
-  //0 is a dummy node;
-  static int r[10] = {0,2,6,1,5,7,8,3,9,0};
-  // static int r[5] = {0,2,3,4,0};
-  //each num represents the successor
-  //2 means 1's successor is 2
-  //5 means 2's successor is 5
-  return r;
-}
-
-int *initRes(int *l, int len){
-  //for array, can only return the pointer of the array
-  //static makes returnable outside local function
-  //need to use malloc to assign array space
-  int *res = (int *)malloc(len * sizeof(int*));
-  for (int i = 0; i < len; i++){
-     // res[i] = i + 10;
-     if(l[i] == 0){
-       res[i] = 0;
-     }else{
-       res[i] = 1;
-     }
   }
-  return res;
-}
-
-////////////////////////////////////////
-__global__ void updateResOneBlock(int *r, int *s){
-  //              result, successor, lenth of array
-  //__shared__ int  *finalRes;
-  //finalRes = r;
-  int *q = s;
-  int i = threadIdx.x;
-  //int distance;
-  //try to update one rounds
-  if(i < 7 && q[i] != 0 && q[q[i]] != 0){
-    r[i] = r[i] + r[q[i]];
-    q[i] = q[q[i]];
-}
-  __syncthreads();
 
 }
 
-__global__ void updateResAll(int *r, int *s, int *q, int n){
-  //              result, successor, lenth of array
-  int i = threadIdx.x;
-  if (i < n){
-    q[i] = s[i];
-    __syncthreads();
 
-    //try to update all
-    while(q[i] != 0 && q[q[i]] != 0){
-      r[i] = r[i] + r[q[i]];
-      q[i] = q[q[i]];
-      __syncthreads();
-    }
-  }
-}
-__global__ void updateOnceBetweenBlocks(int *r1, int *r2, int *s1, int *s2, int n){
-  //update only one round. Use if to control it;
-  int i = threadIdx.x + blockDim.x * blockIdx.x;
-  if( i <= n){
-    int next = s1[i];
-    int nextNext = s1[next];
-    int check = (next != nextNext);
-    r2[i] = r1[i] + check*r1[next];
-    s2[i] = nextNext;
-
-    // if(s1[i] != 0 && s1[s1[i]] != 0){
-    //   res2[i] = res1[i] + res1[s1[i]];
-    //   s2[i] = s1[s1[i]];
-    // }
-  }
-}
-////////////////////////////////////////
 
 int main (){
    int arrayLen = 10;
@@ -129,7 +59,6 @@ int main (){
 
 
 
-
    cudaMemcpy(updateResult, devRes1,arrayLen*sizeof(int),cudaMemcpyDeviceToHost);
    printf("22222222 \n");
    printArray(updateResult,arrayLen);
@@ -140,6 +69,40 @@ int main (){
    cudaFree(devArr1);
    cudaFree(devArr2);
 
+   //-------------------------------------------
+   //dealing with independent sets
+ //   int N[arrayLen];
+ //   for(int m = 0; m< arrayLen;m++){
+ //     N[m] = 0;
+ //   }
+ //   int **u = (int**) malloc(sizeof(int*) * arrayLen);
+ //   for(int i = 0; i < arrayLen; i++){
+ //     u[i] = (int*) malloc(sizeof(int*) * 3);
+ //   }
+ //   for(int j = 0; j< arrayLen; j++){
+ //     for(int k = 0; k< 3; k++){
+ //       u[j][k] = 0;
+ //     }
+ //   }
+ //
+ //   N[1] = 1;
+ //   N[5] = 2;
+ //   N[6] = 3;
+ //   for(int l = 1; l< 10;l++){
+ //   if(N[l] != 0){
+ //     u[N[l]][0] = l;
+ //     u[N[l]][1] = l;
+ //     u[N[l]][2] = l;
+ //   }
+ // }
+ // print2DArray(*u, arrayLen);
+ // for(int i = 0; i< 10; i++){
+ //   for(int j = 0; j<3; j++){
+ //     printf("%d ",(u[i])[j] );
+ //   }
+ //   printf("\n" );
+ // }
+   //-------------------------------------------
 
 
    return 0;
