@@ -88,3 +88,16 @@ __global__ void updateOnceBetweenBlocks(int *r1, int *r2, int *s1, int *s2, int 
     // }
   }
 }
+int **create2Darray(int outer){
+  int **u = (int**) malloc(sizeof(int*) * outer);
+  for(int i = 0; i < outer; i++){
+    *(u+i) = (int*) malloc(sizeof(int) * 4);
+  }
+  for(int j = 0; j< outer; j++){
+    for(int k = 0; k< 4; k++){
+      *(*(u+j) +k) = 0;
+
+    }
+  }
+  return u;
+}

@@ -3,32 +3,89 @@
 #include "parallelFunctions.h"
 // #define N 7;
 //nvcc doesn't distinguish this define thing
-//can use updateResAll to deal with successor array in same block
+//can use updateResAll to deal with successor1 array in same block
 //TODO: how to sync between different blocks?
 
-void print2DArray(int *arr, int listLen){
-  for(int i = 0; i< listLen; i++){
-    for(int j = 0; j<3; j++){
-      printf("%d ",(arr[i][j]) );
-    }
-    printf("\n" );
-  }
-
-}
+// void print2DArray(int *arr, int listLen){
+//   for(int i = 0; i< listLen; i++){
+//     for(int j = 0; j<3; j++){
+//       printf("%d ",(arr[i][j]) );
+//     }
+//     printf("\n" );
+//   }
+//
+// }
 
 
 
 int main (){
    int arrayLen = 10;
-   int *arr1 = (int *)malloc(arrayLen*sizeof(int));
-   int *arr2 = (int *)malloc(arrayLen*sizeof(int));
+   int *successor1 = (int *)malloc(arrayLen*sizeof(int));
+   int *successor2 = (int *)malloc(arrayLen*sizeof(int));
    int *res1 = (int *)malloc(arrayLen*sizeof(int));
    int *res2 = (int *)malloc(arrayLen*sizeof(int));
+   int *predecessor1 = (int *)malloc(arrayLen*sizeof(int));
+   int *predecessor2 = (int *)malloc(arrayLen*sizeof(int));
 
-   arr1 = getSuccessor();
-   arr2 = arr1;
-   res1 = initRes(arr1, arrayLen);
+   successor1 = getSuccessor();
+   successor2 = successor1;
+   res1 = initRes(successor1, arrayLen);
    res2 = res1;
+   predecessor1 = getPredecessor();
+   predecessor2 = predecessor1;
+
+   int **u = create2Darray(10);
+   //print 2D array
+       for(int i = 0; i< 10; i++){
+         for(int j = 0; j<4; j++){
+           printf("%d ",u[i][j] );
+         }
+         printf("\n" );
+       }
+   int head;
+   for(int i = 1; i< arrayLen; i++){
+     if(predecessor1[i] ==0){
+       head = i;
+
+     }
+   }
+   int i = 1;
+   int *newS = (int *)malloc(arrayLen * sizeof(int*));
+   int *newP = (int *)malloc(arrayLen * sizeof(int*));
+   int *newR = (int *)malloc(arrayLen * sizeof(int*));
+
+   for(int i = 0; i< arrayLen; i++){
+     newS[i] = successor1[i];
+     newP[i] = predecessor1[i];
+     newR[i] = res1[i];
+   }
+   while(successor1[successor1[head]] != 0){
+     u[i][0] = head;
+     u[i][1] = successor1[head];
+     u[i][2] = predecessor1[head];
+     u[i][3] = res1[head];
+     newR[predecessor1[head]] = res1[predecessor1[head]] + res1[head];
+     newS[predecessor1[head]] = successor1[head];
+     newP[successor1[head]] = predecessor1[head];
+     // printf("%d\n", head);
+     head = successor1[successor1[head]];
+     i = i+2;
+   }
+   // printf("res: " );
+   // printArray(newR, arrayLen);
+   // printf("successor: " );
+   // printArray(newS, arrayLen);
+   // printf("predecessor: " );
+   // printArray(newP, arrayLen);
+   // //print 2D array
+   //     for(int i = 0; i< 10; i++){
+   //       for(int j = 0; j<4; j++){
+   //         printf("%d ",u[i][j] );
+   //       }
+   //       printf("\n" );
+   //     }
+
+
 
   // printArray(res2,arrayLen);
 //-------------------------------------------
@@ -44,9 +101,21 @@ int main (){
 
    cudaMemcpy(devRes1, res1, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
    cudaMemcpy(devRes2, res2, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
-   cudaMemcpy(devArr1, arr1, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
-   cudaMemcpy(devArr2, arr2, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
+   cudaMemcpy(devArr1, successor1, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
+   cudaMemcpy(devArr2, successor2, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
 
+
+
+
+   cudaMemcpy(updateResult, devRes1,arrayLen*sizeof(int),cudaMemcpyDeviceToHost);
+   cudaMemcpy(successor1, devArr1,arrayLen*sizeof(int),cudaMemcpyDeviceToHost);
+
+   // printArray(updateResult,arrayLen);
+   // printArray(successor1,arrayLen);
+
+
+
+//parallel working here.
    int counter = 1;
    int div = 2;
    while(counter <= arrayLen/2){
@@ -59,10 +128,7 @@ int main (){
 
 
 
-   cudaMemcpy(updateResult, devRes1,arrayLen*sizeof(int),cudaMemcpyDeviceToHost);
-   printf("22222222 \n");
-   printArray(updateResult,arrayLen);
-	 printf("11111111 \n");
+
 
    cudaFree(devRes1);
    cudaFree(devRes2);
@@ -71,38 +137,6 @@ int main (){
 
    //-------------------------------------------
    //dealing with independent sets
- //   int N[arrayLen];
- //   for(int m = 0; m< arrayLen;m++){
- //     N[m] = 0;
- //   }
- //   int **u = (int**) malloc(sizeof(int*) * arrayLen);
- //   for(int i = 0; i < arrayLen; i++){
- //     u[i] = (int*) malloc(sizeof(int*) * 3);
- //   }
- //   for(int j = 0; j< arrayLen; j++){
- //     for(int k = 0; k< 3; k++){
- //       u[j][k] = 0;
- //     }
- //   }
- //
- //   N[1] = 1;
- //   N[5] = 2;
- //   N[6] = 3;
- //   for(int l = 1; l< 10;l++){
- //   if(N[l] != 0){
- //     u[N[l]][0] = l;
- //     u[N[l]][1] = l;
- //     u[N[l]][2] = l;
- //   }
- // }
- // print2DArray(*u, arrayLen);
- // for(int i = 0; i< 10; i++){
- //   for(int j = 0; j<3; j++){
- //     printf("%d ",(u[i])[j] );
- //   }
- //   printf("\n" );
- // }
-   //-------------------------------------------
 
 
    return 0;

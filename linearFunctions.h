@@ -51,10 +51,10 @@ int *initRes(int *l, int len){
 int **create2Darray(int outer){
   int **u = (int**) malloc(sizeof(int*) * outer);
   for(int i = 0; i < outer; i++){
-    *(u+i) = (int*) malloc(sizeof(int) * 3);
+    *(u+i) = (int*) malloc(sizeof(int) * 4);
   }
   for(int j = 0; j< outer; j++){
-    for(int k = 0; k< 3; k++){
+    for(int k = 0; k< 4; k++){
       *(*(u+j) +k) = 0;
 
     }
@@ -71,6 +71,7 @@ int **create2Darray(int outer){
 //   }
 //
 // }
+
 
 
 void print2D(int *arr, int outer){
