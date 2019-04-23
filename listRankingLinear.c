@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "linearFunctions.h"
 #include "genRandom.h"
+#include "timerc.h"
 
 int main ()
 {

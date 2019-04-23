@@ -47,23 +47,31 @@ int main (){
    cudaMemcpy(devRes2, res2, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
    cudaMemcpy(devArr1, arr1, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
    cudaMemcpy(devArr2, arr2, arrayLen*sizeof(int),cudaMemcpyHostToDevice);
+   //-------------------------------------------
+   //dealing with independent sets
+   int *uArray = create2Darray(arrayLen);
+   
+
+
+
+
 
    //------testing time-----
-   float parallelTime;
-   gstart();
-   int counter = 1;
-   int div = 2;
-   while(counter <= arrayLen/2){
-     //1->2, 2->1
-      //<<<block,thread>>>
-     updateOnceBetweenBlocks<<<div,arrayLen/div>>>(devRes1, devRes2,devArr1,devArr2,arrayLen);
-     updateOnceBetweenBlocks<<<div,arrayLen/div>>>(devRes2, devRes1,devArr2,devArr1,arrayLen);
-     counter = counter * 2;
-   }
-   cudaMemcpy(updateResult, devRes1,arrayLen*sizeof(int),cudaMemcpyDeviceToHost);
-   gend(&parallelTime);
-   printf("parallelTime is  %f\n", parallelTime);
-   printArray(updateResult,arrayLen);
+   // float parallelTime;
+   // gstart();
+   // int counter = 1;
+   // int div = 2;
+   // while(counter <= arrayLen/2){
+   //   //1->2, 2->1
+   //    //<<<block,thread>>>
+   //   updateOnceBetweenBlocks<<<div,arrayLen/div>>>(devRes1, devRes2,devArr1,devArr2,arrayLen);
+   //   updateOnceBetweenBlocks<<<div,arrayLen/div>>>(devRes2, devRes1,devArr2,devArr1,arrayLen);
+   //   counter = counter * 2;
+   // }
+   // cudaMemcpy(updateResult, devRes1,arrayLen*sizeof(int),cudaMemcpyDeviceToHost);
+   // gend(&parallelTime);
+   // printf("parallelTime is  %f\n", parallelTime);
+   // printArray(updateResult,arrayLen);
 
 
    cudaFree(devRes1);
@@ -71,8 +79,7 @@ int main (){
    cudaFree(devArr1);
    cudaFree(devArr2);
 
-   //-------------------------------------------
-   //dealing with independent sets
+
 
 
    return 0;
