@@ -10,19 +10,23 @@ void printArray(int *l, int listLen){
     printf("\n" );
 }
 
-int *getSuccessor(){
-  //0 is a dummy node;
-  static int r[10] = {0,2,6,1,5,7,8,3,9,0};
-  // static int r[5] = {0,2,3,4,0};
-  //each num represents the successor
-  //2 means 1's successor is 2
-  //5 means 2's successor is 5
-  return r;
-}
-int *getPredecessor(){
-  static int r[10] = {0,3,1,7,0,4,2,5,6,8};
-  return r;
-}
+// int *getSuccessor(){
+//   //0 is a dummy node;
+//   // static int r[10] = {0,2,6,1,5,7,8,3,9,0};
+//   // static int r[10] = {0,3,0,5,0,7,0,9,0,0};
+//   static int r[10] = {0,2,6,1,5,7,8,3,9,9};
+//
+//
+//   // static int r[5] = {0,2,3,4,0};
+//   //each num represents the successor
+//   //2 means 1's successor is 2
+//   //5 means 2's successor is 5
+//   return r;
+// }
+// int *getPredecessor(){
+//   static int r[10] = {0,3,1,7,3,4,2,5,6,8};
+//   return r;
+// }
 
 int *initRes(int *l, int len){
   //for array, can only return the pointer of the array
@@ -88,6 +92,9 @@ __global__ void updateOnceBetweenBlocks(int *r1, int *r2, int *s1, int *s2, int 
     // }
   }
 }
+
+
+
 int **create2Darray(int outer){
   int **u = (int**) malloc(sizeof(int*) * outer);
   for(int i = 0; i < outer; i++){
@@ -100,4 +107,40 @@ int **create2Darray(int outer){
     }
   }
   return u;
+}
+
+void copyl1tol2(int *l1, int *l2, int len){
+  for(int i = 0; i< len; i++){
+    *(l2+i) = *(l1+i);
+  }
+}
+//---------------------------------------
+//extract the independent set
+__global__ void indepSet(int *r1, int *r2, int *s1, int *s2,int *p1,int *p2, int n, int *u){
+//use 1 as prototype, and store data to 2
+  int id = threadIdx.x + blockDim.x * blockIdx.x;
+  if( id <= n){
+    if(id % 2 == 0){
+      //ex. id = 4
+      r2[id-1] = r1[id-1]+ r1[id];
+      p2[s2[id]] = p1[id];
+      s2[p2[id]] = s1[id];
+
+//// --------store data-------
+      // *(*(u+id)) = 111;
+      // *(*(u+id) + 1) =222;
+      u[4*id+0] = id;
+      u[4*id+1] = p1[id];
+      u[4*id+2] = s1[id];
+      u[4*id+3] = r1[id];
+
+      // u[id][1] = p1[id];
+      // u[id][2] = s1[id];
+      // u[id][3] = r1[id];
+
+      r2[id] = 0;
+      s2[id] = 0;
+      p2[id] = 0;
+    }
+  }
 }

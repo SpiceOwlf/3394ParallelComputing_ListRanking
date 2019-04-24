@@ -3,7 +3,7 @@
 #include <time.h>
 
 int getSingleRan(int len){
-    int i;
+
         int num = (rand() %(len)+1);
         return num;
 }

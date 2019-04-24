@@ -11,7 +11,7 @@
 
 int main(){
   //use this to get a pair of successor and predecessor
-  int len = 3;
+  int len = 10;
   int *suc = randlist(len);
   int *pre = generatePredecessor(suc, len);
   printArray(suc, len);
