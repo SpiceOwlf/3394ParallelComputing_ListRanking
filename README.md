@@ -1,7 +1,2 @@
-# 3394Parallel
-# 3394Parallel
-# 3394Parallel
-# 3394Parallel
-# 3394Parallel
-# 3394Parallel
-#1111111
+WDNMD
+suppose in cuda language. change all .c file to .cu
