@@ -7,6 +7,7 @@ void printArray(int *l, int listLen){
     }
     printf("\n" );
 }
+//later we need to set successor and predecessor automatically
 int *getSuccessor(){
   //0 is a dummy node;
   static int r[10] = {0,2,6,1,5,7,8,3,9,0};
@@ -18,8 +19,20 @@ int *getSuccessor(){
 int *getPredecessor(){
   static int r[10] = {0,3,1,7,0,4,2,5,6,8};
   return r;
+}
+int *setValueForN(int len){
+  // can i pick it randomly?
+  int *n  = (int *)malloc(len * sizeof(int*));
+  for(int i = 0; i< len;i++){
+    n[i] = 0;
+  }
+  n[1] = 1;
+  n[5] = 2;
+  n[6] = 3;
+  return n;
 
 }
+
 int *initRes(int *l, int len){
   //for array, can only return the pointer of the array
   //static makes returnable outside local function
@@ -35,11 +48,53 @@ int *initRes(int *l, int len){
   }
   return res;
 }
+int **create2Darray(int outer){
+  int **u = (int**) malloc(sizeof(int*) * outer);
+  for(int i = 0; i < outer; i++){
+    *(u+i) = (int*) malloc(sizeof(int) * 4);
+  }
+  for(int j = 0; j< outer; j++){
+    for(int k = 0; k< 4; k++){
+      *(*(u+j) +k) = 0;
+
+    }
+  }
+  return u;
+}
+// void update2D_U(int *u_list, int *n_list){
+//   // [arrayLen][3]
+//   for(int i = 1; i< 10; i++){
+//   if(n_list[i] != 0){
+//     u_list[n_list[i]][0] = i;
+//     u_list[n_list[i]][1] = i;
+//     u_list[n_list[i]][2] = i;
+//   }
+//
+// }
+
+
+
+void print2D(int *arr, int outer){
+  for(int i = 0; i< outer; i++){
+    for(int j = 0; j<3; j++){
+      // printf("%d ", arr[i][j] );
+      printf("%d ", *(arr + i*3 +j) );
+    }
+    printf("\n" );
+  }
+}
+
+
+
 
 int *updateRes(int *r, int *s, int len){
   //              result, successor, lenth of array
+  //q and s are seperate
   int *res = r;
-  int *q = s;
+  int *q  = (int *)malloc(len * sizeof(int*));
+  for(int j = 0; j< len; j++){
+    q[j] = s[j];
+  }
   //can use q[i] to find the element
   for(int i =0; i< len; i++){
     while(q[i] != 0 && q[q[i]] != 0){
@@ -48,27 +103,4 @@ int *updateRes(int *r, int *s, int len){
     }
   }
   return res;
-}
-
-int *indeSetRemove(int *r, int *s, int *p, int *u, int len){
-//remove 3 nodes from the original list
-//remove {1,3,6}
-
-
-}
-
-int main ()
-{
-   int arrayLen = 10;
-   int *arr;
-   arr = getSuccessor();
-   printArray(arr,arrayLen);
-   int *res;
-   res = initRes(arr, arrayLen);
-   printArray(res,arrayLen);
-   int *updateResult;
-
-   updateResult = updateRes(res, arr, arrayLen);
-   printArray(updateResult,arrayLen);
-   return 0;
 }
