@@ -1,5 +1,5 @@
 /* timerc.h
- * this files contains 
+ * this files contains
  *				timer header functions IMP
  * 	that can be compiled with nvcc without -std=c++11 flag
  */
@@ -30,9 +30,9 @@ clock_t cpu_start, cpu_end;
 inline void cstart() { cpu_start = clock(); }
 
 //cend
-inline void cend(float * cputime) 
-{ 
-	cpu_end = clock(); 
+inline void cend(float * cputime)
+{
+	cpu_end = clock();
 	*cputime = (float) (cpu_end - cpu_start) / CLOCKS_PER_SEC * 1000.0;
 }
 

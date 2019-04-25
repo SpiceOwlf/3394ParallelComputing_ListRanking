@@ -8,20 +8,12 @@
 //TODO: get independent lists? algo 3.2?
 //TODO: final algorithm, 3.3?
 
-// void print2DArray(int *arr, int listLen){
-//   for(int i = 0; i< listLen; i++){
-//     for(int j = 0; j<3; j++){
-//       printf("%d ",(arr[i][j]) );
-//     }
-//     printf("\n" );
-//   }
-//
-// }
 
 
 
 int main (){
    int arrayLen = 1024*1024;
+   int div = 2;
    int *arr1 = (int *)malloc(arrayLen*sizeof(int));
    int *arr2 = (int *)malloc(arrayLen*sizeof(int));
    int *res1 = (int *)malloc(arrayLen*sizeof(int));
@@ -52,7 +44,7 @@ int main (){
    float parallelTime;
    gstart();
    int counter = 1;
-   int div = 2;
+
    while(counter <= arrayLen/2){
      //1->2, 2->1
       //<<<block,thread>>>
