@@ -32,7 +32,7 @@ __global__ void updateIndepSet(int *r1, int *s1, int *p1, int n, int *u){
 
 int main (){
    int arrayLen = 1024*1024;
-    int div = 1024;
+    int div = 2;
    int *suc1 = (int *)malloc(arrayLen*sizeof(int));
    int *suc2 = (int *)malloc(arrayLen*sizeof(int));
    int *res1 = (int *)malloc(arrayLen*sizeof(int));
@@ -139,10 +139,10 @@ int main (){
    }
 //----------------------------------------------
 //retrive original data
-gend(&parallelTime);
-printf("parallelTime is  %f\n", parallelTime);
-   updateIndepSet<<<div,arrayLen/div>>>(devRes2, devSuc2, devPre2, arrayLen, devStorage);
 
+   updateIndepSet<<<div,arrayLen/div>>>(devRes2, devSuc2, devPre2, arrayLen, devStorage);
+   gend(&parallelTime);
+   printf("parallelTime is  %f\n", parallelTime);
 
 
 
