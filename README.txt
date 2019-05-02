@@ -5,6 +5,6 @@ This is the class project of parallel computing. This project implemented the Li
 
 
 MORE TO DO: 
--make a test function to check the result;\n
+-make a test function to check the result;
 -test kernel time seperately;
 -USE "atomic write" to ensure the sychronization between blocks;
