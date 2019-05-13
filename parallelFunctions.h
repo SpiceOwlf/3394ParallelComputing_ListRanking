@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// void printArray(int *l, int listLen){
-//   for(int x=0; x<listLen; x++)
-//     {
-//         printf("%d  ",  l[x]);
-//
-//     }
-//     printf("\n" );
-// }
+void printArray(int *l, int listLen){
+  for(int x=0; x<listLen; x++)
+    {
+        printf("%d  ",  l[x]);
+
+    }
+    printf("\n" );
+}
 //----------------------------------
 // int *getSuccessor(){
 //   //0 is a dummy node;
@@ -28,21 +28,21 @@
 //   return r;
 // }
 
-// int *initRes(int *l, int len){
-//   //for array, can only return the pointer of the array
-//   //static makes returnable outside local function
-//   //need to use malloc to assign array space
-//   int *res = (int *)malloc(len * sizeof(int*));
-//   for (int i = 0; i < len; i++){
-//      // res[i] = i + 10;
-//      if(l[i] == 0){
-//        res[i] = 0;
-//      }else{
-//        res[i] = 1;
-//      }
-//   }
-//   return res;
-// }
+int *initRes(int *l, int len){
+  //for array, can only return the pointer of the array
+  //static makes returnable outside local function
+  //need to use malloc to assign array space
+  int *res = (int *)malloc(len * sizeof(int*));
+  for (int i = 0; i < len; i++){
+     // res[i] = i + 10;
+     if(l[i] == 0){
+       res[i] = 0;
+     }else{
+       res[i] = 1;
+     }
+  }
+  return res;
+}
 
 ////////////////////////////////////////
 __global__ void updateResOneBlock(int *r, int *s){
@@ -144,3 +144,62 @@ __global__ void indepSet(int *r1, int *r2, int *s1, int *s2,int *p1,int *p2, int
     }
   }
 }
+__device__ int findZero(int *set, int n){
+  for(int i = 0; i< n; i++){
+    if (set[i] == 0){
+      return i;
+    }
+
+ }
+ return 0;
+}
+__device__ int *two_coloring(int *s1,int *p1, int n){
+//result1, successor, predessor, length, u
+//u:node number, s p r
+  int *colorSet = (int *)malloc(n/2 * sizeof(int*));
+  int headNode = findZero(p1, n);
+  int count = 0;
+  while(s1[headNode] != 0 && s1[s1[headNode]] != 0  ){
+    colorSet[count] = headNode;
+    headNode =  s1[s1[headNode]];
+    count ++;
+  }
+  return colorSet;
+  }
+__device__  bool isVauleThere(int val, int *arr, int size){
+    int i;
+    for (i=0; i < size; i++) {
+        if (arr[i] == val)
+            return true;
+    }
+    return false;
+}
+  __global__ void indepSetNew(int *r1, int *r2, int *s1, int *s2,int *p1,int *p2, int n, int *u){
+  //use 1 as prototype, and store data to 2
+    int id = threadIdx.x + blockDim.x * blockIdx.x;
+    int *localColorSet = two_coloring(s1,p1,n);
+
+    if( id <= n){
+      if(isVauleThere(id,localColorSet,n/2)){
+
+        r2[p1[id]] = r1[p1[id]]+ r1[id];
+        p2[s2[id]] = p1[id];
+        s2[p2[id]] = s1[id];
+
+  //// --------store data-------
+
+        u[4*id+0] = id;
+        u[4*id+1] = p1[id];
+        u[4*id+2] = s1[id];
+        u[4*id+3] = r1[id];
+
+        // u[id][1] = p1[id];
+        // u[id][2] = s1[id];
+        // u[id][3] = r1[id];
+
+        r2[id] = 0;
+        s2[id] = 0;
+        p2[id] = 0;
+      }
+    }
+  }
