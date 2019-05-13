@@ -35,7 +35,7 @@ int main (){
 //-------------------------------------------
 //update threads in parallel
 
-   int *updateResult = (int *)malloc (arrayLen*sizeof(int));
+   int *updateResultP = (int *)malloc (arrayLen*sizeof(int));
    int *devRes1, *devArr1;//device result, array;
    int *devRes2, *devArr2;//device result, array;
    cudaMalloc((void **)&devRes1, arrayLen*sizeof(int));
@@ -60,10 +60,10 @@ int main (){
      updateOnceBetweenBlocks<<<div,arrayLen/div>>>(devRes2, devRes1,devArr2,devArr1,arrayLen);
      counter = counter * 2;
    }
-   cudaMemcpy(updateResult, devRes1,arrayLen*sizeof(int),cudaMemcpyDeviceToHost);
+   cudaMemcpy(updateResultP, devRes1,arrayLen*sizeof(int),cudaMemcpyDeviceToHost);
    gend(&parallelTime);
    printf("parallelTime is  %f\n", parallelTime);
-   printArray(updateResult,arrayLen);
+   printArray(updateResultP,arrayLen);
 
 
    cudaFree(devRes1);

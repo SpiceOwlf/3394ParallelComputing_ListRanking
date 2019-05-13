@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void printArray(int *l, int listLen){
-  for(int x=0; x<listLen; x++)
-    {
-        printf("%d  ",  l[x]);
-
-    }
-    printf("\n" );
-}
-
+// void printArray(int *l, int listLen){
+//   for(int x=0; x<listLen; x++)
+//     {
+//         printf("%d  ",  l[x]);
+//
+//     }
+//     printf("\n" );
+// }
+//----------------------------------
 // int *getSuccessor(){
 //   //0 is a dummy node;
 //   // static int r[10] = {0,2,6,1,5,7,8,3,9,0};
@@ -28,21 +28,21 @@ void printArray(int *l, int listLen){
 //   return r;
 // }
 
-int *initRes(int *l, int len){
-  //for array, can only return the pointer of the array
-  //static makes returnable outside local function
-  //need to use malloc to assign array space
-  int *res = (int *)malloc(len * sizeof(int*));
-  for (int i = 0; i < len; i++){
-     // res[i] = i + 10;
-     if(l[i] == 0){
-       res[i] = 0;
-     }else{
-       res[i] = 1;
-     }
-  }
-  return res;
-}
+// int *initRes(int *l, int len){
+//   //for array, can only return the pointer of the array
+//   //static makes returnable outside local function
+//   //need to use malloc to assign array space
+//   int *res = (int *)malloc(len * sizeof(int*));
+//   for (int i = 0; i < len; i++){
+//      // res[i] = i + 10;
+//      if(l[i] == 0){
+//        res[i] = 0;
+//      }else{
+//        res[i] = 1;
+//      }
+//   }
+//   return res;
+// }
 
 ////////////////////////////////////////
 __global__ void updateResOneBlock(int *r, int *s){
@@ -95,19 +95,19 @@ __global__ void updateOnceBetweenBlocks(int *r1, int *r2, int *s1, int *s2, int 
 
 
 
-int **create2Darray(int outer){
-  int **u = (int**) malloc(sizeof(int*) * outer);
-  for(int i = 0; i < outer; i++){
-    *(u+i) = (int*) malloc(sizeof(int) * 4);
-  }
-  for(int j = 0; j< outer; j++){
-    for(int k = 0; k< 4; k++){
-      *(*(u+j) +k) = 0;
-
-    }
-  }
-  return u;
-}
+// int **create2Darray(int outer){
+//   int **u = (int**) malloc(sizeof(int*) * outer);
+//   for(int i = 0; i < outer; i++){
+//     *(u+i) = (int*) malloc(sizeof(int) * 4);
+//   }
+//   for(int j = 0; j< outer; j++){
+//     for(int k = 0; k< 4; k++){
+//       *(*(u+j) +k) = 0;
+//
+//     }
+//   }
+//   return u;
+// }
 
 void copyl1tol2(int *l1, int *l2, int len){
   for(int i = 0; i< len; i++){
