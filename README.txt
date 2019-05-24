@@ -7,6 +7,10 @@ improved in many cases.
 
 
 MORE TO DO: 
--make a test function to check the result;
--test kernel time seperately;
 -USE "atomic write" to ensure the sychronization between blocks;
+
+updates on May 23:
+This project is done.
+1. Some issues: the "independent set method" is not perfect, which will cause bugs. A better way to optimize that will be using    "alternative coloring" method.
+2. Atomic writing can sychronize the infomation between blocks in a more efficient way. I used the main function to acchieve that, but it's not ideal.
+
